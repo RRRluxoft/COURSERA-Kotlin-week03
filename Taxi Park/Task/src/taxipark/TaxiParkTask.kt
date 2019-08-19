@@ -1,16 +1,21 @@
 package taxipark
 
+import kotlin.math.min
+
 /*
  * Task #1. Find all the drivers who performed no trips.
  */
-fun TaxiPark.findFakeDrivers(): Set<Driver> =
-        TODO()
-
+fun TaxiPark.findFakeDrivers(): Set<Driver> {
+    return allDrivers.subtract(this.trips.map { trip -> trip.driver } )
+}
 /*
  * Task #2. Find all the clients who completed at least the given number of trips.
  */
-fun TaxiPark.findFaithfulPassengers(minTrips: Int): Set<Passenger> =
-        TODO()
+fun TaxiPark.findFaithfulPassengers(minTrips: Int): Set<Passenger> {
+    val tripsSuccess = this.trips.groupBy { t -> t.driver }.filterValues { it.size >= minTrips }
+//    if (tripsSuccess.size >= minTrips) return tripsSuccess.flatMap { it. }.toSet()
+    return emptySet()
+}
 
 /*
  * Task #3. Find all the passengers, who were taken by a given driver more than once.

@@ -49,6 +49,5 @@ fun String.isNice(): Boolean {
     if (checkDoubles())  { checksSuccess += 1 }
 
     return checksSuccess >= 2
-    //return !this.contains("bu")
 }
 

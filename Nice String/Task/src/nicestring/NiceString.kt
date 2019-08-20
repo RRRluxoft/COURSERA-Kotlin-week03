@@ -39,22 +39,32 @@ fun String.isNice(): Boolean {
 
     fun checkDoubles(): Boolean {
         var chPrev: Char
-        var currentCh: Char
-        val word = this
-        chPrev = word[0]
-        for (ch in word.subSequence(1, word.length )) {
-            currentCh = ch
-            if (chPrev == currentCh) return true
-            chPrev = currentCh
+        chPrev = this[0]
+        for (ch in this.subSequence(1, this.length )) {
+            if (chPrev == ch) return true
+            chPrev = ch
         }
         return false
     }
+
+    /* start block instead of function
+    fun checkDoubles()*/
+    var hasDoubles = false
+    if (length > 1) {
+        var prevCh: Char? = null
+        for (ch in this) {
+            if (ch == prevCh) hasDoubles = true
+            prevCh = ch
+        }
+    }
+    /* end of block */
 
 //    if (checkSubs()) { checksSuccess += 1 }
     if (noBadString) { checksSuccess += 1 }
 //    if (checkVowels())  { checksSuccess += 1 }
     if (hasTreeVowels)  { checksSuccess += 1 }
     if (checkDoubles())  { checksSuccess += 1 }
+//    if (hasDoubles)  { checksSuccess += 1 }
 
     return checksSuccess >= 2
 }

@@ -2,11 +2,9 @@ package nicestring
 
 fun String.isNice(): Boolean {
     if (this.isEmpty() && this.isBlank()) return false
-
-    var checksSuccess = 0
     val subs = listOf("bu", "ba", "be")
 
-    val noBadString = !contains("ba") && !contains("bu") && !contains("be")
+    val noBadString_old = !this.contains("ba") && !contains("bu") && !contains("be")
 
     fun checkSubs(): Boolean {
 //        subs.map {
@@ -18,7 +16,7 @@ fun String.isNice(): Boolean {
         return true
     }
 
-    val hasTreeVowels = count {
+    val hasTreeVowels_old = count {
         it == 'a' || it == 'e' || it == 'i' || it == 'o' || it == 'u'
     } >= 3
 
@@ -57,15 +55,17 @@ fun String.isNice(): Boolean {
             prevCh = ch
         }
     }
+    // or: val hasDoubles =
+    (0 until lastIndex).any { this[it] == this[it + 1] }
+    // or: val hasDoubles =
+    zipWithNext().any { it.first == it.second }
+
     /* end of block */
 
-//    if (checkSubs()) { checksSuccess += 1 }
-    if (noBadString) { checksSuccess += 1 }
-//    if (checkVowels())  { checksSuccess += 1 }
-    if (hasTreeVowels)  { checksSuccess += 1 }
-    if (checkDoubles())  { checksSuccess += 1 }
-//    if (hasDoubles)  { checksSuccess += 1 }
+    val noBadString = subs.none { this.contains(it) }
+    val hasTreeVowels = count { it in "aeiou" } >= 3
+    val hasDouble2 = windowed(2).any { it[0] == it[1] }
 
-    return checksSuccess >= 2
+    return listOf(noBadString, hasTreeVowels, hasDouble2).count { it == true } >= 2
 }
 

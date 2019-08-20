@@ -6,6 +6,8 @@ fun String.isNice(): Boolean {
     var checksSuccess = 0
     val subs = listOf("bu", "ba", "be")
 
+    val noBadString = !contains("ba") && !contains("bu") && !contains("be")
+
     fun checkSubs(): Boolean {
 //        subs.map {
 //            e -> if (this.contains(e)) return false
@@ -15,6 +17,10 @@ fun String.isNice(): Boolean {
         } }
         return true
     }
+
+    val hasTreeVowels = count {
+        it == 'a' || it == 'e' || it == 'i' || it == 'o' || it == 'u'
+    } >= 3
 
     fun checkVowels(): Boolean {
         var count = 0
@@ -44,8 +50,10 @@ fun String.isNice(): Boolean {
         return false
     }
 
-    if (checkSubs()) { checksSuccess += 1 }
-    if (checkVowels())  { checksSuccess += 1 }
+//    if (checkSubs()) { checksSuccess += 1 }
+    if (noBadString) { checksSuccess += 1 }
+//    if (checkVowels())  { checksSuccess += 1 }
+    if (hasTreeVowels)  { checksSuccess += 1 }
     if (checkDoubles())  { checksSuccess += 1 }
 
     return checksSuccess >= 2

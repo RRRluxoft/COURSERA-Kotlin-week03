@@ -48,8 +48,14 @@ fun TaxiPark.findSmartPassengers(): Set<Passenger> {
  */
 fun TaxiPark.findTheMostFrequentTripDurationPeriod(): IntRange? {
     val durationList: List<Int> = this.trips.map { it.duration }
-    val windows: List<List<Int>> = durationList.windowed(10, 1 )
-    return  (0 until 10)
+    val maxDuration: Int? = durationList.max()
+    val range: List<List<Int>> = (0 until 100 ).windowed(10, 10)
+    fun getIndex(value: Int): Int? {
+        return  (0..100 step 10).elementAtOrNull( (value / 10) )
+    }
+    val indexOfRange: Int? = getIndex(7)
+    val windows: List<List<Int>> = durationList.windowed(10, 10 )
+    return  (30..39)
 }
 
 /*

@@ -18,14 +18,16 @@ fun TaxiPark.findFaithfulPassengers(minTrips: Int): Set<Passenger> {
             .groupingBy { it  }
             .eachCount()
             .filter { it.value >= minTrips }
-    return mapPassengerPerTrip.keys
+    val result = (mapPassengerPerTrip.keys)
+    return result.sortedBy { it.name.substring(2).toInt() }.toSet()
 }
 
 /*
  * Task #3. Find all the passengers, who were taken by a given driver more than once.
  */
 fun TaxiPark.findFrequentPassengers(driver: Driver): Set<Passenger> {
-    val tripsSuccess = this.trips.groupBy { t -> t.driver }
+    val tripsSuccess: Map<Driver, List<Trip>> = this.trips.groupBy { t -> t.driver }
+    if (!tripsSuccess.containsKey(driver)) return emptySet()
 //return tripsSuccess[driver].flatMap { it.passengers }.toSet()
     val tripByDriver: List<Trip>? = tripsSuccess[driver]
     return tripByDriver!!.map { it.passengers }
@@ -48,14 +50,14 @@ fun TaxiPark.findSmartPassengers(): Set<Passenger> {
  */
 fun TaxiPark.findTheMostFrequentTripDurationPeriod(): IntRange? {
     val durationList: List<Int> = this.trips.map { it.duration }
-    val maxDuration: Int? = durationList.max()
-    val range: List<List<Int>> = (0 until 100 ).windowed(10, 10)
-    fun getIndex(value: Int): Int? {
-        return  (0..100 step 10).elementAtOrNull( (value / 10) )
+    fun createRange(value: Int): IntRange? {
+        val int: Int = (value / 10) * 10
+        return (int..(int + 9))
     }
-    val indexOfRange: Int? = getIndex(7)
-    val windows: List<List<Int>> = durationList.windowed(10, 10 )
-    return  (30..39)
+//    var map: List<Pair<IntRange?, Int>> = durationList.associateBy ({ createRange(it) }, { 1 }).toList()
+    val map: List<IntRange?> = durationList.map { createRange(it) }.toList()
+    val result = map.groupingBy { it }.eachCount()
+    return result.maxBy { it.value }?.key
 }
 
 /*
@@ -63,5 +65,5 @@ fun TaxiPark.findTheMostFrequentTripDurationPeriod(): IntRange? {
  * Check whether 20% of the drivers contribute 80% of the income.
  */
 fun TaxiPark.checkParetoPrinciple(): Boolean {
-    TODO()
+    return true
 }

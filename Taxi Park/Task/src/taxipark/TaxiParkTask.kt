@@ -18,8 +18,14 @@ fun TaxiPark.findFaithfulPassengers(minTrips: Int): Set<Passenger> {
             .groupingBy { it  }
             .eachCount()
             .filter { it.value >= minTrips }
-    val result = (mapPassengerPerTrip.keys)
-    return result.sortedBy { it.name.substring(2).toInt() }.toSet()
+    val result = mapPassengerPerTrip.keys
+//    return result.sortedBy { it.name.substring(2).toInt() }.toSet()
+    return this.allPassengers
+            .filter {
+                this.trips
+                        .filter { trip: Trip -> it in trip.passengers }
+                        .count() >= minTrips
+            }.toSet()
 }
 
 /*
@@ -40,8 +46,15 @@ fun TaxiPark.findFrequentPassengers(driver: Driver): Set<Passenger> {
  * Task #4. Find the passengers who had a discount for majority of their trips.
  */
 fun TaxiPark.findSmartPassengers(): Set<Passenger> {
-        val allPasses = this.trips.filter { it.discount != null }.flatMap { it.passengers }
-        return allPasses.toSet()
+    val allPasses = this.trips.filter { it.discount != null && it.discount > 0.0 }.flatMap { it.passengers }.toSet()
+    val allPassesWithout = this.trips.filter { it.discount == null || it.discount == 0.0 }.flatMap { it.passengers }.toSet()
+    val result = this.allPassengers
+            .filter { allPasses.count() > allPassesWithout.count()  }.toSet()
+
+    return this.allPassengers
+            .filter { p: Passenger -> this.trips.filter { p in it.passengers && it.discount != null }.count() >
+                    this.trips.filter { p in it.passengers && it.discount == null }.count()
+            }.toSet()
 }
 
 /*
@@ -65,5 +78,23 @@ fun TaxiPark.findTheMostFrequentTripDurationPeriod(): IntRange? {
  * Check whether 20% of the drivers contribute 80% of the income.
  */
 fun TaxiPark.checkParetoPrinciple(): Boolean {
-    return true
+    if(this.trips.isEmpty()) {
+        return false
+    } else {
+        val totalTripsCost = this.trips.map { it.cost }.sum()
+        val mapCostByDriverSorted =  trips
+                .groupBy { it.driver }
+                .mapValues { (_, trips) -> trips.sumByDouble { it.cost }}
+                .toList()
+                .sortedByDescending { (_, value) -> value}.toMap()
+
+        var currentSum = 0.0
+        var numberOfDrivers = 0
+        for (value in mapCostByDriverSorted.values){
+            numberOfDrivers++
+            currentSum += value
+            if (currentSum >= (totalTripsCost * 0.8)) break
+        }
+        return numberOfDrivers <= (allDrivers.size * 0.2)
+    }
 }
